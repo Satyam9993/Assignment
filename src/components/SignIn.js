@@ -10,14 +10,15 @@ const schema = Yup.object().shape({
     password: Yup.string().min(6).max(15).required("Please Enter Your Password!").min(6),
 });
 
-const SignIn = ({ setRoute }) => {
+const SignIn = ({ setRoute, showAlert }) => {
     const [show, setShow] = useState(false);
 
     const formik = useFormik({
         initialValues: { email: "", password: "", name: "" },
         validationSchema: schema,
         onSubmit: async (email, password, name) => {
-            console.log(email, password, name);
+            // TODO
+            showAlert("success", "SignUp Successfully")
         }
     });
 

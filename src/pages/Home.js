@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar'
 import CustomModal from '../components/CustomModal';
 import Login from '../components/Login';
 import SignIn from '../components/SignIn';
-import { Box, Modal } from '@mui/material';
+import { Alert, Box, Modal } from '@mui/material';
 import AddPurchase from '../components/AddPurchase';
 import Hero from '../components/Hero';
 import axios from 'axios';
@@ -14,6 +14,8 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const Home = () => {
     const [open, setOpen] = useState(false);
     const [route, setRoute] = useState("Login");
+    const [isShowAlert, setIsShowAlert] = useState(false);
+    const [alert, setAlert] = useState({});
     const dispatch = useDispatch();
     const token = useSelector(state => state.user.accessToken);
     const user = useSelector(state => state.user.user);
@@ -101,6 +103,17 @@ const Home = () => {
         }
     };
 
+    const showAlert = (severity, msg) => {
+        setAlert({
+            severity,
+            msg
+        });
+        setIsShowAlert(true);
+        setTimeout(() => {
+            setIsShowAlert(false);
+        }, 1500);
+    }
+
     useEffect(() => {
         if (user?.role === "user") {
             fetchAllVendors();
@@ -109,24 +122,32 @@ const Home = () => {
         if (user?.role === "vendor") {
             fetchAllOrdersToVendor();
         }
-        setInterval(() => {
-            if (user?.role === "user") {
-                fetchAllVendors();
-                fetchAllOrders();
-            }
-            if (user?.role === "vendor") {
-                fetchAllOrdersToVendor();
-            }
-        }, 60000);
-        
+        // setInterval(() => {
+        //     if (user?.role === "user") {
+        //         fetchAllVendors();
+        //         fetchAllOrders();
+        //     }
+        //     if (user?.role === "vendor") {
+        //         fetchAllOrdersToVendor();
+        //     }
+        // }, 60000);
+
     });
 
     return (
         <>
+            {isShowAlert && <div className='fixed top-0 left-1/2 transform -translate-x-1/2'>
+                <Alert severity={alert.severity}>
+                    {alert.msg}
+                </Alert>
+            </div>
+            }
+
             <Navbar page="home" setOpen={setOpen} setRoute={setRoute} />
             {
-                token &&
-                <Hero openFormPurchase={openFormPurchase} setSchedule={setSchedule} />
+                token ?
+                    <Hero openFormPurchase={openFormPurchase} setSchedule={setSchedule} showAlert={showAlert} /> :
+                    <div className='text-xl p-5 text-center'>Login to access</div>
             }
             {
                 route === "Login" && (
@@ -138,6 +159,7 @@ const Home = () => {
                                     setOpen={setOpen}
                                     setRoute={setRoute}
                                     Component={Login}
+                                    showAlert={showAlert}
                                 />
                             )
                         }
@@ -154,6 +176,7 @@ const Home = () => {
                                     setOpen={setOpen}
                                     setRoute={setRoute}
                                     Component={SignIn}
+                                    showAlert={showAlert}
                                 />
                             )
                         }
@@ -172,7 +195,7 @@ const Home = () => {
                                     aria-describedby="modal-modal-description"
                                 >
                                     <Box className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-slate-900 rounded-[10px] shadow p-4 outline-none">
-                                        <AddPurchase setOpen={setOpen} />
+                                        <AddPurchase setOpen={setOpen} showAlert={showAlert} />
                                     </Box>
                                 </Modal>
                             )

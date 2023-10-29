@@ -24,7 +24,7 @@ const schema = Yup.object().shape({
   vendor: Yup.string().required("Please Select Vendor"),
 });
 
-const AddPurchaseLoader = ({ setOpen }) => {
+const AddPurchaseLoader = ({ setOpen, showAlert }) => {
   const [docUpload, setDocUpload] = useState(null);
   const dispatch = useDispatch();
   const token = useSelector(state => state.user.accessToken);
@@ -67,12 +67,13 @@ const AddPurchaseLoader = ({ setOpen }) => {
         dispatch(setPurchaseOrder({
           purchaseOrder: addpurchase.order,
         }));
-        setOpen(false)
+        setOpen(false);
+        showAlert("success", "Purchase Order Added Successfully");
       } else {
-        alert(addpurchase.message);
+        showAlert("error", addpurchase.message);
       }
     } catch (error) {
-      console.error("An error occurred:", error.message);
+      showAlert("error", error.message);
     }
   };
 

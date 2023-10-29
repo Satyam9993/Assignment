@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux';
 import OrderCart from './OrderCart';
 
-const Hero = ({ openFormPurchase }) => {
+const Hero = ({ openFormPurchase, showAlert }) => {
     const orders = useSelector(state => state.user.orders);
     const user = useSelector(state => state.user.user);
 
@@ -20,7 +20,7 @@ const Hero = ({ openFormPurchase }) => {
                     </div>
                     <div className="flex flex-wrap -m-4">
                         {orders?.map((order) => (
-                            <OrderCart key={order._id} order={order} />
+                            <OrderCart key={order._id} order={order} showAlert={showAlert}/>
                         ))}
                     </div>
                 </div>

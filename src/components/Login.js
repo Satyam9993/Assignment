@@ -13,7 +13,7 @@ const schema = Yup.object().shape({
     password: Yup.string().min(6).max(15).required("Please Enter Your Password!").min(6),
 });
 
-const Login = ({ setRoute, setOpen }) => {
+const Login = ({ setRoute, setOpen, showAlert }) => {
     const [show, setShow] = useState(false);
     const [isUser, setIsUser] = useState(true);
     const dispatch = useDispatch();
@@ -44,12 +44,13 @@ const Login = ({ setRoute, setOpen }) => {
                         accessToken: login.accessToken
                     }));
                 }
-                setOpen(false)
+                setOpen(false);
+                showAlert("success", "Login Successfully");
             } else {
-                alert(login.message);
+                showAlert("error", login.message);
             }
         } catch (error) {
-            console.error("An error occurred:", error.message);
+            showAlert("error", error.message);
         }
     };
 

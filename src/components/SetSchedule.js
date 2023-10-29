@@ -13,7 +13,7 @@ const schema = Yup.object().shape({
   shippingSchedule2: Yup.string().required("shippingSchedule3 Enter productName"),
 });
 
-const SetSchedule = ({ setOpen, order }) => {
+const SetSchedule = ({ setOpen, order, showAlert }) => {
   const dispatch = useDispatch();
   const token = useSelector(state => state.user.accessToken);
 
@@ -36,11 +36,12 @@ const SetSchedule = ({ setOpen, order }) => {
           order: updatepurchaseSchedule.order,
         }));
         setOpen(false);
+        showAlert("success", "Schedule Updated Successfully");
       } else {
-        alert(updatepurchaseSchedule.message);
+        showAlert("error", updatepurchaseSchedule.message);
       }
     } catch (error) {
-      console.error("An error occurred:", error.message);
+      showAlert("error", error.message);
     }
   };
 
