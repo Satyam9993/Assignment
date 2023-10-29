@@ -21,6 +21,10 @@ const Home = () => {
         setOpen(true);
         setRoute("addpurchase");
     }
+    const setSchedule = () => {
+        setOpen(true);
+        setRoute("setschedule");
+    }
 
     const fetchAllVendors = async () => {
         try {
@@ -58,13 +62,13 @@ const Home = () => {
             if (response.status !== 200) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            const vendors = response.data;
-            if (vendors.success === true) {
-                dispatch(setVendor({
-                    vendors: vendors.vendors
+            const orders = response.data;
+            if (orders.success === true) {
+                dispatch(setOrders({
+                    orders: orders.orders
                 }));
             } else {
-                alert(vendors.message);
+                alert(orders.message);
             }
         } catch (error) {
             // alert(error.message);
@@ -98,11 +102,11 @@ const Home = () => {
     };
 
     useEffect(() => {
-        if(user.role === "user"){
+        if(user?.role === "user"){
             fetchAllVendors();
             fetchAllOrders();
         }
-        if(user.role === "vendor"){
+        if(user?.role === "vendor"){
             fetchAllOrdersToVendor();
         }
     });
@@ -110,7 +114,10 @@ const Home = () => {
     return (
         <>
             <Navbar page="home" setOpen={setOpen} setRoute={setRoute} />
-            <Hero openFormPurchase={openFormPurchase} />
+            {
+                token && 
+                <Hero openFormPurchase={openFormPurchase}  setSchedule={setSchedule}/>
+            }
             {
                 route === "Login" && (
                     <>
@@ -163,6 +170,7 @@ const Home = () => {
                     </>
                 )
             }
+            
         </>
     )
 }

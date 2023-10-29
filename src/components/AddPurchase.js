@@ -240,7 +240,7 @@ const AddPurchaseLoader = ({ setOpen }) => {
           value="Login"
           className={`${styles.button}`}
         >
-          Login
+          Add
         </button>
         <br />
       </form>

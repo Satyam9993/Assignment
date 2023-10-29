@@ -15,11 +15,13 @@ const schema = Yup.object().shape({
 
 const Login = ({ setRoute, setOpen }) => {
     const [show, setShow] = useState(false);
+    const [isUser, setIsUser] = useState(true);
     const dispatch = useDispatch();
 
     const handleLogin = async (values) => {
         try {
-            const response = await axios.post(`${BACKEND_URL}/login`, values, {
+            const url = isUser ? `${BACKEND_URL}/login` : `${BACKEND_URL}/vendor/login`;
+            const response = await axios.post(url, values, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -31,12 +33,19 @@ const Login = ({ setRoute, setOpen }) => {
 
             const login = response.data;
             if (login.success === true) {
-                dispatch(setLogin({
-                    user: login.user,
-                    accessToken: login.accessToken
-                }));
+                if (isUser) {
+                    dispatch(setLogin({
+                        user: login.user,
+                        accessToken: login.accessToken
+                    }));
+                } else {
+                    dispatch(setLogin({
+                        user: login.vendor,
+                        accessToken: login.accessToken
+                    }));
+                }
                 setOpen(false)
-            }else{
+            } else {
                 alert(login.message);
             }
         } catch (error) {
@@ -46,9 +55,18 @@ const Login = ({ setRoute, setOpen }) => {
 
     return (
         <div className="w-full">
-            <h1 className={`${styles.title}`}>
-                Login USER
-            </h1>
+            {
+                isUser ? (
+                    <h1 className={`${styles.title}`}>
+                        Login USER
+                    </h1>
+                ) : (
+                    <h1 className={`${styles.title}`}>
+                        Login Vendor
+                    </h1>
+                )
+            }
+
             <Formik
                 initialValues={{ email: '', password: '' }}
                 validationSchema={schema}
@@ -122,7 +140,24 @@ const Login = ({ setRoute, setOpen }) => {
                         >
                             Login
                         </button>
-                        <h5 className='text-center text-white  pt-4 font-Poppins text-[14px]'>
+                        {isUser ? <h5 className='text-center text-white  pt-4 font-Poppins text-[14px]'>
+                            Are you Vendor?{" "}
+                            <span
+                                className="text-blue-500 cursor-pointer"
+                                onClick={() => setIsUser(false)}
+                            >
+                                Login Vendor
+                            </span>
+                        </h5> : <h5 className='text-center text-white  pt-4 font-Poppins text-[14px]'>
+                            Are you User?{" "}
+                            <span
+                                className="text-blue-500 cursor-pointer"
+                                onClick={() => setIsUser(true)}
+                            >
+                                Login User
+                            </span>
+                        </h5>}
+                        {isUser && <h5 className='text-center text-white  pt-4 font-Poppins text-[14px]'>
                             Not have an account?{" "}
                             <span
                                 className="text-blue-500 cursor-pointer"
@@ -130,7 +165,7 @@ const Login = ({ setRoute, setOpen }) => {
                             >
                                 Sign Up
                             </span>
-                        </h5>
+                        </h5>}
                         <br />
                     </div>
                 )}
