@@ -51,7 +51,6 @@ const AddPurchaseLoader = ({ setOpen }) => {
 
   const addPurchaseOrder = async (values) => {
     try {
-      console.log(token);
       const response = await axios.post(`${BACKEND_URL}/create-order`, values, {
         headers: {
           'Content-Type': 'application/json',
@@ -82,7 +81,6 @@ const AddPurchaseLoader = ({ setOpen }) => {
     initialValues: { productName: "", quantity: 0, dateOfShipping: "", vendor: "" },
     validationSchema: schema,
     onSubmit: async ({ productName, quantity, dateOfShipping, vendor }) => {
-      console.log(vendor);
       if (docUpload == null) {
         const values = {
           productName: productName,
@@ -90,7 +88,6 @@ const AddPurchaseLoader = ({ setOpen }) => {
           dateOfShipping: dateOfShipping,
           vendor: vendor
         }
-        console.log(values);
         await addPurchaseOrder(values);
       } else {
         await uploadFile().then(async (url) => {
@@ -101,10 +98,8 @@ const AddPurchaseLoader = ({ setOpen }) => {
             document: url,
             vendor: vendor
           }
-          console.log(values);
           await addPurchaseOrder(values);
         }).catch(async (error) => {
-          console.log(error);
         });
       }
 

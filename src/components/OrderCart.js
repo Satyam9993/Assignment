@@ -9,7 +9,7 @@ const OrderCart = ({ order }) => {
     const user = useSelector(state => state.user.user);
     const [open, setOpen] = useState(false);
 
-    const setSchedule = () => {
+    const setSchedulef = () => {
         setOpen(true);
     }
 
@@ -25,11 +25,11 @@ const OrderCart = ({ order }) => {
                     <p className="leading-relaxed text-base">{"Schedule3 : "}{order.shippingSchedule3 !== null ? order.shippingSchedule3 : "NAN"}{" "}{order.selectedSchedule === "shippingSchedule3" && <CheckBoxIcon style={{ color: "green" }} />}</p>
                     {
                         user.role === "vendor" && !order.shippingSchedule1 && !order.shippingSchedule2 && !order.shippingSchedule3 &&
-                        <button onClick={setSchedule} className="flex mx-auto mt-2 text-white bg-indigo-500 border-0 py-2 px-2 focus:outline-none hover:bg-indigo-600 rounded text-sm">Set Schedule</button>
+                        <button onClick={setSchedulef} className="flex mx-auto mt-2 text-white bg-indigo-500 border-0 py-2 px-2 focus:outline-none hover:bg-indigo-600 rounded text-sm">Set Schedule</button>
                     }
                     {
                         user.role === "user" && order.selectedSchedule === null && order.shippingSchedule1 && order.shippingSchedule2 && order.shippingSchedule3 &&
-                        <button onClick={setSchedule} className="flex mx-auto mt-2 text-white bg-indigo-500 border-0 py-2 px-2 focus:outline-none hover:bg-indigo-600 rounded text-sm">Select Schedule</button>
+                        <button onClick={setSchedulef} className="flex mx-auto mt-2 text-white bg-indigo-500 border-0 py-2 px-2 focus:outline-none hover:bg-indigo-600 rounded text-sm">Select Schedule</button>
                     }
                 </div>
             </div>

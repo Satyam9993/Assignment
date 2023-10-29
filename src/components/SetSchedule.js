@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import { styles } from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { setPurchaseOrder } from '../store/User';
+import { setScheduleOrder } from '../store/User';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const schema = Yup.object().shape({
@@ -19,7 +19,6 @@ const SetSchedule = ({ setOpen, order }) => {
 
   const setShippingSchedule = async (values) => {
     try {
-      alert(order._id)
       const response = await axios.put(`${BACKEND_URL}/update-order/${order._id}`, values, {
         headers: {
           'Content-Type': 'application/json',
@@ -31,14 +30,14 @@ const SetSchedule = ({ setOpen, order }) => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      const addpurchase = response.data;
-      if (addpurchase.success === true) {
-        dispatch(setPurchaseOrder({
-          purchaseOrder: addpurchase.order,
+      const updatepurchaseSchedule = response.data;
+      if (updatepurchaseSchedule.success === true) {
+        dispatch(setScheduleOrder({
+          order: updatepurchaseSchedule.order,
         }));
-        setOpen(false)
+        setOpen(false);
       } else {
-        alert(addpurchase.message);
+        alert(updatepurchaseSchedule.message);
       }
     } catch (error) {
       console.error("An error occurred:", error.message);

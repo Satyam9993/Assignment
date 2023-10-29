@@ -30,8 +30,17 @@ export const userAuthSlice = createSlice({
         setOrders: (state, action) => {
             state.orders = action.payload.orders;
         },
+        setScheduleOrder: (state, action) => {
+            state.orders =  state.orders.map((order) => {
+                if (order._id === action.payload.order._id) {
+                    return action.payload.order;
+                } else {
+                    return order;
+                }
+            });
+        }
     },
 });
 
-export const { setLogin, setLogout, setPurchaseOrder, setVendor, setOrders } = userAuthSlice.actions;
+export const { setLogin, setLogout, setPurchaseOrder, setVendor, setOrders, setScheduleOrder } = userAuthSlice.actions;
 export default userAuthSlice.reducer;

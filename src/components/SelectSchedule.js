@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import { styles } from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { setPurchaseOrder } from '../store/User';
+import { setScheduleOrder } from '../store/User';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const schema = Yup.object().shape({
@@ -28,14 +28,15 @@ const SelectSchedule = ({ setOpen, order }) => {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
-            const addpurchase = response.data;
-            if (addpurchase.success === true) {
-                dispatch(setPurchaseOrder({
-                    purchaseOrder: addpurchase.order,
+            const updatepurchaseSchedule = response.data;
+            if (updatepurchaseSchedule.success === true) {
+                console.log(updatepurchaseSchedule);
+                dispatch(setScheduleOrder({
+                    order: updatepurchaseSchedule.order,
                 }));
-                setOpen(false)
+                setOpen(false);
             } else {
-                alert(addpurchase.message);
+                alert(updatepurchaseSchedule.message);
             }
         } catch (error) {
             console.error("An error occurred:", error.message);
@@ -44,9 +45,9 @@ const SelectSchedule = ({ setOpen, order }) => {
 
 
     const formik = useFormik({
-        initialValues: { selectedSchedule: ""},
+        initialValues: { selectedSchedule: "" },
         validationSchema: schema,
-        onSubmit: async ({ selectedSchedule}) => {
+        onSubmit: async ({ selectedSchedule }) => {
             const values = {
                 selectedSchedule
             }

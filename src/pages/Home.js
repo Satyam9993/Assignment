@@ -102,21 +102,31 @@ const Home = () => {
     };
 
     useEffect(() => {
-        if(user?.role === "user"){
+        if (user?.role === "user") {
             fetchAllVendors();
             fetchAllOrders();
         }
-        if(user?.role === "vendor"){
+        if (user?.role === "vendor") {
             fetchAllOrdersToVendor();
         }
+        setInterval(() => {
+            if (user?.role === "user") {
+                fetchAllVendors();
+                fetchAllOrders();
+            }
+            if (user?.role === "vendor") {
+                fetchAllOrdersToVendor();
+            }
+        }, 60000);
+        
     });
 
     return (
         <>
             <Navbar page="home" setOpen={setOpen} setRoute={setRoute} />
             {
-                token && 
-                <Hero openFormPurchase={openFormPurchase}  setSchedule={setSchedule}/>
+                token &&
+                <Hero openFormPurchase={openFormPurchase} setSchedule={setSchedule} />
             }
             {
                 route === "Login" && (
@@ -170,7 +180,7 @@ const Home = () => {
                     </>
                 )
             }
-            
+
         </>
     )
 }
