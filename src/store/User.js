@@ -5,6 +5,7 @@ const initialState = {
     accessToken: null,
     purchaseOrder: null,
     vendors : [],
+    orders : []
 };
 
 export const userAuthSlice = createSlice({
@@ -26,8 +27,11 @@ export const userAuthSlice = createSlice({
         setVendor: (state, action) => {
             state.vendors = action.payload.vendors;
         },
+        setOrders: (state, action) => {
+            state.orders = action.payload.orders;
+        },
     },
 });
 
-export const { setLogin, setLogout, setPurchaseOrder, setVendor } = userAuthSlice.actions;
+export const { setLogin, setLogout, setPurchaseOrder, setVendor, setOrders } = userAuthSlice.actions;
 export default userAuthSlice.reducer;

@@ -8,7 +8,7 @@ import AddPurchase from '../components/AddPurchase';
 import Hero from '../components/Hero';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { setVendor } from '../store/User';
+import { setOrders, setVendor } from '../store/User';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Home = () => {
@@ -16,6 +16,7 @@ const Home = () => {
     const [route, setRoute] = useState("Login");
     const dispatch = useDispatch();
     const token = useSelector(state => state.user.accessToken);
+    const user = useSelector(state => state.user.user);
     const openFormPurchase = () => {
         setOpen(true);
         setRoute("addpurchase");
@@ -25,19 +26,19 @@ const Home = () => {
         try {
             const response = await axios.get(`${BACKEND_URL}/vendor/all`, {
                 headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': token
+                    'Content-Type': 'application/json',
+                    'Authorization': token
                 },
-              });
-            if(response.status !== 200){
+            });
+            if (response.status !== 200) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const vendors = response.data;
-            if(vendors.success === true){
+            if (vendors.success === true) {
                 dispatch(setVendor({
                     vendors: vendors.vendors
                 }));
-            }else{
+            } else {
                 alert(vendors.message);
             }
         } catch (error) {
@@ -46,14 +47,70 @@ const Home = () => {
         }
     };
 
+    const fetchAllOrdersToVendor = async () => {
+        try {
+            const response = await axios.get(`${BACKEND_URL}/vendor/orders/all`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token
+                },
+            });
+            if (response.status !== 200) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const vendors = response.data;
+            if (vendors.success === true) {
+                dispatch(setVendor({
+                    vendors: vendors.vendors
+                }));
+            } else {
+                alert(vendors.message);
+            }
+        } catch (error) {
+            // alert(error.message);
+            console.log(error.message);
+        }
+    };
+
+    const fetchAllOrders = async () => {
+        try {
+            const response = await axios.get(`${BACKEND_URL}/getallorders`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token
+                },
+            });
+            if (response.status !== 200) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const orders = response.data;
+            if (orders.success === true) {
+                dispatch(setOrders({
+                    orders: orders.orders
+                }));
+            } else {
+                alert(orders.message);
+            }
+        } catch (error) {
+            // alert(error.message);
+            console.log(error.message);
+        }
+    };
+
     useEffect(() => {
-        fetchAllVendors();
+        if(user.role === "user"){
+            fetchAllVendors();
+            fetchAllOrders();
+        }
+        if(user.role === "vendor"){
+            fetchAllOrdersToVendor();
+        }
     });
 
     return (
         <>
-            <Navbar page="home" setOpen={setOpen} setRoute={setRoute}/>
-            <Hero openFormPurchase={openFormPurchase}/>
+            <Navbar page="home" setOpen={setOpen} setRoute={setRoute} />
+            <Hero openFormPurchase={openFormPurchase} />
             {
                 route === "Login" && (
                     <>
@@ -98,7 +155,7 @@ const Home = () => {
                                     aria-describedby="modal-modal-description"
                                 >
                                     <Box className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-slate-900 rounded-[10px] shadow p-4 outline-none">
-                                        <AddPurchase setOpen={setOpen}/>
+                                        <AddPurchase setOpen={setOpen} />
                                     </Box>
                                 </Modal>
                             )
