@@ -27,10 +27,6 @@ const Login = ({ setRoute, setOpen, showAlert }) => {
                 },
             });
 
-            if (response.status !== 200) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
             const login = response.data;
             if (login.success === true) {
                 if (isUser) {

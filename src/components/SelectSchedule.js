@@ -23,11 +23,6 @@ const SelectSchedule = ({ setOpen, order, showAlert }) => {
                     'Authorization': token
                 },
             });
-
-            if (response.status !== 200) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
             const updatepurchaseSchedule = response.data;
             if (updatepurchaseSchedule.success === true) {
                 console.log(updatepurchaseSchedule);

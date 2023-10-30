@@ -10,6 +10,7 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { setOrders, setVendor, setNotification } from '../store/User';
 import Notification from '../components/Notification';
+import AddVendor from '../components/AddVendor';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Home = () => {
@@ -111,7 +112,7 @@ const Home = () => {
 
     const fetchAllNotifications = async () => {
         try {
-            const response = await axios.get(`${BACKEND_URL}/${user.role}/get-all-notification`, {
+            const response = await axios.get(`${BACKEND_URL}/${user?.role}/get-all-notification`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': token
@@ -183,6 +184,23 @@ const Home = () => {
                                     setOpen={setOpen}
                                     setRoute={setRoute}
                                     Component={Login}
+                                    showAlert={showAlert}
+                                />
+                            )
+                        }
+                    </>
+                )
+            }
+            {
+                route === "addventor" && (
+                    <>
+                        {
+                            open && (
+                                <CustomModal
+                                    open={open}
+                                    setOpen={setOpen}
+                                    setRoute={setRoute}
+                                    Component={AddVendor}
                                     showAlert={showAlert}
                                 />
                             )

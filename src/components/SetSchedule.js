@@ -26,10 +26,6 @@ const SetSchedule = ({ setOpen, order, showAlert }) => {
         },
       });
 
-      if (response.status !== 200) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
       const updatepurchaseSchedule = response.data;
       if (updatepurchaseSchedule.success === true) {
         dispatch(setScheduleOrder({

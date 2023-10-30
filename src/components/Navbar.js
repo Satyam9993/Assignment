@@ -14,6 +14,10 @@ const Navbar = ({ page, setOpen, setRoute, notificationHandler }) => {
         setRoute("Login");
         setOpen(true);
     };
+    const openAddVEndor = () => {
+        setRoute("addventor");
+        setOpen(true);
+    };
     const logout = () => {
         dispatch(setLogout());
     }
@@ -40,6 +44,9 @@ const Navbar = ({ page, setOpen, setRoute, notificationHandler }) => {
                         </button>
                     </div>
                 </nav>
+                {user?.role === "user" &&<button className="bg-blue-500 text-white p-2 mx-3 rounded-sm" onClick={openAddVEndor}>
+                    Add Vendor
+                </button>}
                 {!user ?
                     <button className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0" onClick={openLogin}>
                         Login

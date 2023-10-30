@@ -58,10 +58,6 @@ const AddPurchaseLoader = ({ setOpen, showAlert }) => {
         },
       });
 
-      if (response.status !== 200) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
       const addpurchase = response.data;
       if (addpurchase.success === true) {
         dispatch(setPurchaseOrder({

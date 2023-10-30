@@ -3,6 +3,8 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { AiOutlineEyeInvisible, AiOutlineEye } from 'react-icons/ai';
 import { styles } from '../styles/style';
+import axios from 'axios';
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const schema = Yup.object().shape({
     name: Yup.string().required("Please Enter Your Name!"),
@@ -10,15 +12,69 @@ const schema = Yup.object().shape({
     password: Yup.string().min(6).max(15).required("Please Enter Your Password!").min(6),
 });
 
-const SignIn = ({ setRoute, showAlert }) => {
+
+
+const SignIn = ({ setOpen, setRoute, showAlert }) => {
     const [show, setShow] = useState(false);
+    const [activationCode, setActivationCode] = useState(null);
+    const [isotp, setIsOtp] = useState(false);
+    const [otp, setOtp] = useState(null);
+
+    const handleOptSubmit = async() => {
+        if(otp.length===4){
+            const values = {
+                activation_token : activationCode,
+                activation_code : otp
+            }
+            try {
+                const response = await axios.post(`${BACKEND_URL}/activate-user`, values, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+    
+                const otp = response.data;
+                if (otp.success === true) {
+                    setOpen(false);
+                    showAlert("success", "SignUp Successfully");
+                } else {
+                    showAlert("error", otp.message);
+                }
+            } catch (error) {
+                showAlert("error", error.message);
+            }
+
+        }else{
+            showAlert("error", "otp is of 4 digit");
+        }
+    }
+
+    const handleSignin = async (values) => {
+        try {
+            const response = await axios.post(`${BACKEND_URL}/register`, values, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const signin = response.data;
+            console.log(signin);
+            if (signin.success === true) {
+                showAlert("success", "otp is Send to your email");
+                setActivationCode(signin.activationToken)
+                setIsOtp(true);
+            } else {
+                showAlert("error", signin.message);
+            }
+        } catch (error) {
+            showAlert("error", error.message);
+        }
+    };
 
     const formik = useFormik({
         initialValues: { email: "", password: "", name: "" },
         validationSchema: schema,
-        onSubmit: async (email, password, name) => {
-            // TODO
-            showAlert("success", "SignUp Successfully")
+        onSubmit: async ({email, password, name}) => {
+            handleSignin({ email, password, name });
         }
     });
 
@@ -29,7 +85,7 @@ const SignIn = ({ setRoute, showAlert }) => {
             <h1 className={`${styles.title}`}>
                 SignUp USER
             </h1>
-            <form onSubmit={handleSubmit}>
+            {!isotp && <form onSubmit={handleSubmit}>
                 <div className="w-full mt-5 relative mb-1">
                     <label htmlFor="name" className={`${styles.label}`}>
                         Enter Your Name
@@ -116,7 +172,32 @@ const SignIn = ({ setRoute, showAlert }) => {
                     </span>
                 </h5>
                 <br />
-            </form>
+            </form>}
+            {
+                isotp && (
+                    <>
+                        <div className="w-full mt-5 relative mb-1">
+                            <label htmlFor="name" className={`${styles.label}`}>
+                                Enter OTP
+                            </label>
+                            <input
+                                type="text"
+                                id="name"
+                                onChange={(e) => setOtp(e.target.value)}
+                                placeholder='****'
+                                className={`${styles.input}`}
+                            />
+                            <button
+                                value="Login"
+                                className={`${styles.button}`}
+                                onClick={handleOptSubmit}
+                            >
+                                Submit
+                            </button>
+                        </div>
+                    </>
+                )
+            }
         </div>
     )
 }
