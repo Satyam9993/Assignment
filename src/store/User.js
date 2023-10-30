@@ -5,7 +5,8 @@ const initialState = {
     accessToken: null,
     purchaseOrder: null,
     vendors : [],
-    orders : []
+    orders : [],
+    notifications : []
 };
 
 export const userAuthSlice = createSlice({
@@ -38,9 +39,12 @@ export const userAuthSlice = createSlice({
                     return order;
                 }
             });
-        }
+        },
+        setNotification: (state, action) => {
+            state.notifications = action.payload.notifications;
+        },
     },
 });
 
-export const { setLogin, setLogout, setPurchaseOrder, setVendor, setOrders, setScheduleOrder } = userAuthSlice.actions;
+export const { setLogin, setLogout, setPurchaseOrder, setVendor, setOrders, setScheduleOrder, setNotification } = userAuthSlice.actions;
 export default userAuthSlice.reducer;

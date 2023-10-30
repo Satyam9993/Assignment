@@ -8,7 +8,8 @@ import AddPurchase from '../components/AddPurchase';
 import Hero from '../components/Hero';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { setOrders, setVendor } from '../store/User';
+import { setOrders, setVendor, setNotification } from '../store/User';
+import Notification from '../components/Notification';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Home = () => {
@@ -19,6 +20,11 @@ const Home = () => {
     const dispatch = useDispatch();
     const token = useSelector(state => state.user.accessToken);
     const user = useSelector(state => state.user.user);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const notificationHandler = (isOpen) => {
+        setIsModalOpen(isOpen);
+    };
     const openFormPurchase = () => {
         setOpen(true);
         setRoute("addpurchase");
@@ -103,6 +109,30 @@ const Home = () => {
         }
     };
 
+    const fetchAllNotifications = async () => {
+        try {
+            const response = await axios.get(`${BACKEND_URL}/${user.role}/get-all-notification`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token
+                },
+            });
+            if (response.status !== 200) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const notifications = response.data;
+            if (notifications.success === true) {
+                dispatch(setNotification({
+                    notifications: notifications.notifications
+                }));
+            } else {
+                showAlert("error", notifications.message);
+            }
+        } catch (error) {
+            showAlert("error", error.message)
+        }
+    };
+
     const showAlert = (severity, msg) => {
         setAlert({
             severity,
@@ -122,20 +152,14 @@ const Home = () => {
         if (user?.role === "vendor") {
             fetchAllOrdersToVendor();
         }
-        // setInterval(() => {
-        //     if (user?.role === "user") {
-        //         fetchAllVendors();
-        //         fetchAllOrders();
-        //     }
-        //     if (user?.role === "vendor") {
-        //         fetchAllOrdersToVendor();
-        //     }
-        // }, 60000);
-
+        if (user) {
+            fetchAllNotifications();
+        }
     });
 
     return (
         <>
+            <Notification showAlert={showAlert} notificationHandler={notificationHandler} isModalOpen={isModalOpen} />
             {isShowAlert && <div className='fixed top-0 left-1/2 transform -translate-x-1/2'>
                 <Alert severity={alert.severity}>
                     {alert.msg}
@@ -143,10 +167,10 @@ const Home = () => {
             </div>
             }
 
-            <Navbar page="home" setOpen={setOpen} setRoute={setRoute} />
+            <Navbar page="home" setOpen={setOpen} setRoute={setRoute} isModalOpen={isModalOpen} notificationHandler={notificationHandler} />
             {
                 token ?
-                    <Hero openFormPurchase={openFormPurchase} setSchedule={setSchedule} showAlert={showAlert} /> :
+                    <Hero openFormPurchase={openFormPurchase} setSchedule={setSchedule} showAlert={showAlert}/> :
                     <div className='text-xl p-5 text-center'>Login to access</div>
             }
             {

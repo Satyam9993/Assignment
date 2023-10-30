@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useDispatch, useSelector } from 'react-redux';
-import {setLogout} from '../store/User'
+import { setLogout } from '../store/User';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 
-const Navbar = ({ page, setOpen, setRoute }) => {
+const Navbar = ({ page, setOpen, setRoute, notificationHandler }) => {
     const user = useSelector(state => state.user.user);
+    const notifications = useSelector(state => state.user.notifications);
     const dispatch = useDispatch();
     const openLogin = () => {
         setRoute("Login");
@@ -25,16 +27,28 @@ const Navbar = ({ page, setOpen, setRoute }) => {
                 </Link>
                 <nav className="md:ml-auto flex flex-wrap items-center text-lg justify-center">
                     <Link to="/" className={`mr-5 hover:text-gray-900 ${page === 'home' && "active text-blue-900 font-semibold"}`}>Home</Link>
-            </nav>
+                    <div className="py-8">
+                        <button
+                            onClick={() => notificationHandler(true)}
+                            className="mr-4"
+                        >
+                            {notifications.length === 0 ?
+                                <NotificationsIcon />
+                                :
+                                <NotificationsIcon className='text-red-600' />
+                            }
+                        </button>
+                    </div>
+                </nav>
                 {!user ?
-                <button className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0" onClick={openLogin}>
-                    Login
-                    <LoginIcon className="w-4 h-4 ml-1" />
-                </button>:
-                <button className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0" onClick={logout}>
-                    Logout
-                    <LogoutIcon className="w-4 h-4 ml-1" />
-                </button>
+                    <button className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0" onClick={openLogin}>
+                        Login
+                        <LoginIcon className="w-4 h-4 ml-1" />
+                    </button> :
+                    <button className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0" onClick={logout}>
+                        Logout
+                        <LogoutIcon className="w-4 h-4 ml-1" />
+                    </button>
                 }
             </div>
         </header>
